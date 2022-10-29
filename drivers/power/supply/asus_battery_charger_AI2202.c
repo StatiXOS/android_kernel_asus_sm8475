@@ -26,8 +26,8 @@
 //[+++] Add debug log
 #define CHARGER_TAG "[BAT][CHG]"
 #define ERROR_TAG "[ERR]"
-#define CHG_DBG(...)  printk(KERN_INFO CHARGER_TAG __VA_ARGS__)
-#define CHG_DBG_E(...)  printk(KERN_ERR CHARGER_TAG ERROR_TAG __VA_ARGS__)
+#define CHG_DBG(...)  pr_debug(CHARGER_TAG __VA_ARGS__)
+#define CHG_DBG_E(...)  pr_debug(CHARGER_TAG ERROR_TAG __VA_ARGS__)
 //[---] Add debug log
 
 enum {
@@ -2500,7 +2500,7 @@ static void asus_jeita_rule_worker(struct work_struct *dat){
     union power_supply_propval prop = {};
 
     tmp = WORK_JEITA_RULE;
-    printk(KERN_ERR "[BAT][CHG]%s set BATTMAN_OEM_WORK_EVENT : WORK_JEITA_RULE", __func__);
+    pr_debug(KERN_ERR "[BAT][CHG]%s set BATTMAN_OEM_WORK_EVENT : WORK_JEITA_RULE", __func__);
     rc = oem_prop_write(BATTMAN_OEM_WORK_EVENT, &tmp, 1);
     if (rc < 0) {
         pr_err("Failed to set BATTMAN_OEM_WORK_EVENT WORK_JEITA_RULE rc=%d\n", rc);
@@ -2527,7 +2527,7 @@ static void asus_jeita_cc_worker(struct work_struct *dat){
 
     tmp[0] = WORK_JEITA_CC;
     tmp[1] = 0;
-    printk(KERN_ERR "[BAT][CHG]%s set BATTMAN_OEM_WORK_EVENT : WORK_JEITA_CC", __func__);
+    pr_debug(KERN_ERR "[BAT][CHG]%s set BATTMAN_OEM_WORK_EVENT : WORK_JEITA_CC", __func__);
     rc = oem_prop_write(BATTMAN_OEM_WORK_EVENT, tmp, 2);
     if (rc < 0) {
         pr_err("Failed to set BATTMAN_OEM_WORK_EVENT WORK_JEITA_CC rc=%d\n", rc);
@@ -2657,7 +2657,7 @@ static void asus_18W_workaround_worker(struct work_struct *dat){
     u32 tmp;
 
     tmp = WORK_18W_WORKAROUND;
-    printk(KERN_ERR "[BAT][CHG]%s set BATTMAN_OEM_WORK_EVENT : WORK_18W_WORKAROUND", __func__);
+    pr_debug(KERN_ERR "[BAT][CHG]%s set BATTMAN_OEM_WORK_EVENT : WORK_18W_WORKAROUND", __func__);
     rc = oem_prop_write(BATTMAN_OEM_WORK_EVENT, &tmp, 1);
     if (rc < 0) {
         pr_err("Failed to set BATTMAN_OEM_WORK_EVENT WORK_18W_WORKAROUND rc=%d\n", rc);
@@ -2682,7 +2682,7 @@ static void asus_panel_check_worker(struct work_struct *dat){
     u32 tmp;
 
     tmp = WORK_PANEL_CHECK;
-    printk(KERN_ERR "[BAT][CHG]%s set BATTMAN_OEM_WORK_EVENT : WORK_PANEL_CHECK", __func__);
+    pr_debug(KERN_ERR "[BAT][CHG]%s set BATTMAN_OEM_WORK_EVENT : WORK_PANEL_CHECK", __func__);
     rc = oem_prop_write(BATTMAN_OEM_WORK_EVENT, &tmp, 1);
     if (rc < 0) {
         pr_err("Failed to set BATTMAN_OEM_WORK_EVENT WORK_PANEL_CHECK rc=%d\n", rc);
@@ -2724,7 +2724,7 @@ void asus_monitor_start(int status){
     if (asus_usb_online == status) return;
 
     asus_usb_online = status;
-    printk(KERN_ERR "[BAT][CHG] asus_monitor_start %d\n", asus_usb_online);
+    pr_debug(KERN_ERR "[BAT][CHG] asus_monitor_start %d\n", asus_usb_online);
     if(asus_usb_online){
         cancel_delayed_work_sync(&asus_jeita_rule_work);
         schedule_delayed_work(&asus_jeita_rule_work, 0);
@@ -2786,10 +2786,10 @@ void monitor_charging_enable(void)
 		tmp = 1;
                 ChgPD_Info.ultra_bat_life = tmp;
                 tmp = ChgPD_Info.ultra_bat_life;
-		printk("%s. set BATTMAN_OEM_Batt_Protection : %d", __func__, tmp);
+		pr_debug("%s. set BATTMAN_OEM_Batt_Protection : %d", __func__, tmp);
 		rc = oem_prop_write(BATTMAN_OEM_Batt_Protection, &tmp, 1);
 		if (rc < 0) {
-			printk("Failed to set BATTMAN_OEM_Batt_Protection rc=%d\n", rc);
+			pr_debug("Failed to set BATTMAN_OEM_Batt_Protection rc=%d\n", rc);
 		}
 
 		first_cos_48h_protect = true;
@@ -2910,7 +2910,7 @@ int asuslib_init(void) {
     struct pmic_glink_client_data client_data = { };
     struct pmic_glink_client    *client;
 
-    printk(KERN_ERR "%s +++\n", __func__);
+    pr_debug(KERN_ERR "%s +++\n", __func__);
     // Initialize the necessary power supply
     rc = asus_init_power_supply_prop();
     if (rc < 0) {
@@ -2944,12 +2944,12 @@ int asuslib_init(void) {
     quickchg_extcon = extcon_asus_dev_allocate();
     if (IS_ERR(quickchg_extcon)) {
         rc = PTR_ERR(quickchg_extcon);
-        printk(KERN_ERR "[BAT][CHG] failed to allocate ASUS quickchg extcon device rc=%d\n", rc);
+        pr_debug(KERN_ERR "[BAT][CHG] failed to allocate ASUS quickchg extcon device rc=%d\n", rc);
     }
     quickchg_extcon->name = "quick_charging";
     rc = extcon_asus_dev_register(quickchg_extcon);
     if (rc < 0)
-        printk(KERN_ERR "[BAT][CHG] failed to register ASUS quickchg extcon device rc=%d\n", rc);
+        pr_debug(KERN_ERR "[BAT][CHG] failed to register ASUS quickchg extcon device rc=%d\n", rc);
 
     asus_extcon_set_state_sync(quickchg_extcon, SWITCH_LEVEL0_DEFAULT);
 
@@ -2974,30 +2974,30 @@ int asuslib_init(void) {
     bat_id_extcon->name = "battery_id";
     rc = extcon_asus_dev_register(bat_id_extcon);
     if (rc < 0)
-        printk(KERN_ERR "[BAT][CHG] failed to register bat_id_extcon device rc=%d\n", rc);
+        pr_debug(KERN_ERR "[BAT][CHG] failed to register bat_id_extcon device rc=%d\n", rc);
 
     //adaptervid_extcon
     adaptervid_extcon = extcon_asus_dev_allocate();
     if (IS_ERR(adaptervid_extcon)) {
         rc = PTR_ERR(adaptervid_extcon);
-        printk(KERN_ERR "[BAT][CHG] failed to allocate ASUS adaptervid extcon device rc=%d\n", rc);
+        pr_debug(KERN_ERR "[BAT][CHG] failed to allocate ASUS adaptervid extcon device rc=%d\n", rc);
     }
     adaptervid_extcon->name = "adaptervid";
     rc = extcon_asus_dev_register(adaptervid_extcon);
     if (rc < 0)
-        printk(KERN_ERR "[BAT][CHG] failed to register ASUS adaptervid extcon device rc=%d\n", rc);
+        pr_debug(KERN_ERR "[BAT][CHG] failed to register ASUS adaptervid extcon device rc=%d\n", rc);
     asus_extcon_set_state_sync(adaptervid_extcon, 0);
 
     //[+++]Register the extcon for thermal alert
     thermal_extcon = extcon_asus_dev_allocate();
     if (IS_ERR(thermal_extcon)) {
         rc = PTR_ERR(thermal_extcon);
-        printk(KERN_ERR "[BAT][CHG] failed to allocate ASUS thermal alert extcon device rc=%d\n", rc);
+        pr_debug(KERN_ERR "[BAT][CHG] failed to allocate ASUS thermal alert extcon device rc=%d\n", rc);
     }
     thermal_extcon->name = "usb_connector";
     rc = extcon_asus_dev_register(thermal_extcon);
     if (rc < 0)
-        printk(KERN_ERR "[BAT][CHG] failed to register ASUS thermal alert extcon device rc=%d\n", rc);
+        pr_debug(KERN_ERR "[BAT][CHG] failed to register ASUS thermal alert extcon device rc=%d\n", rc);
 
    //[+++] Init the PMIC-GLINK
     client_data.id = PMIC_GLINK_MSG_OWNER_OEM;

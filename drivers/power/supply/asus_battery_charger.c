@@ -395,8 +395,8 @@ struct extcon_asus_dev	*audio_dongle_extcon;
 //[+++] Add debug log
 #define CHARGER_TAG "[BAT][CHG]"
 #define ERROR_TAG "[ERR]"
-#define CHG_DBG(...)  printk(KERN_INFO CHARGER_TAG __VA_ARGS__)
-#define CHG_DBG_E(...)  printk(KERN_ERR CHARGER_TAG ERROR_TAG __VA_ARGS__)
+#define CHG_DBG(...)  pr_debug(CHARGER_TAG __VA_ARGS__)
+#define CHG_DBG_E(...)  pr_debug(CHARGER_TAG ERROR_TAG __VA_ARGS__)
 //[---] Add debug log
 
 //[+++] Add the global variables
@@ -587,7 +587,7 @@ int battery_chg_write(struct battery_chg_dev *bcdev, void *data,
 	int rc;
 
 	if (bcdev == NULL) {
-		printk("[BAT][CHG] bcdev is NULL, don't send glink message\n");
+		pr_debug("[BAT][CHG] bcdev is NULL, don't send glink message\n");
 		return 0;
 	}
 	
@@ -3527,7 +3527,7 @@ int asuslib_init(void) {
 	struct pmic_glink_client_data client_data = { };
 	struct pmic_glink_client	*client;
 
-	printk(KERN_ERR "%s +++\n", __func__);
+	pr_debug("%s +++\n", __func__);
 	// Initialize the necessary power supply
 	rc = asus_init_power_supply_prop();
 	if (rc < 0) {
@@ -3599,7 +3599,7 @@ int asuslib_init(void) {
 	
 	rc = extcon_asus_dev_register(bat_extcon);
 	if (rc < 0)
-		printk(KERN_ERR "[BAT][CHG] failed to register bat_extcon device rc=%d\n", rc);
+		pr_debug("[BAT][CHG] failed to register bat_extcon device rc=%d\n", rc);
 
 	bat_id_extcon = extcon_asus_dev_allocate();
 	if (IS_ERR(bat_id_extcon)) {
@@ -3609,20 +3609,20 @@ int asuslib_init(void) {
 
 	rc = extcon_asus_dev_register(bat_id_extcon);
 	if (rc < 0)
-		printk(KERN_ERR "[BAT][CHG] failed to register bat_id_extcon device rc=%d\n", rc);
+		pr_debug("[BAT][CHG] failed to register bat_id_extcon device rc=%d\n", rc);
 
 	//[+++]Register the extcon for quick_charger
 	quickchg_extcon = extcon_asus_dev_allocate();
 	if (IS_ERR(quickchg_extcon)) {
 		rc = PTR_ERR(quickchg_extcon);
-		printk(KERN_ERR "[BAT][CHG] failed to allocate ASUS quickchg extcon device rc=%d\n", rc);
+		pr_debug("[BAT][CHG] failed to allocate ASUS quickchg extcon device rc=%d\n", rc);
 	}
 //	#if defined ASUS_ZS673KS_PROJECT || defined ASUS_PICASSO_PROJECT
 	quickchg_extcon->name = "quick_charging";
 //	#endif
 	rc = extcon_asus_dev_register(quickchg_extcon);
 	if (rc < 0)
-		printk(KERN_ERR "[BAT][CHG] failed to register ASUS quickchg extcon device rc=%d\n", rc);
+		pr_debug("[BAT][CHG] failed to register ASUS quickchg extcon device rc=%d\n", rc);
 		
 	INIT_DELAYED_WORK(&asus_set_qc_state_work, asus_set_qc_state_worker);
 	//[---]Register the extcon for quick_charger
@@ -3631,25 +3631,25 @@ int asuslib_init(void) {
 	thermal_extcon = extcon_asus_dev_allocate();
 	if (IS_ERR(thermal_extcon)) {
 		rc = PTR_ERR(thermal_extcon);
-		printk(KERN_ERR "[BAT][CHG] failed to allocate ASUS thermal alert extcon device rc=%d\n", rc);
+		pr_debug("[BAT][CHG] failed to allocate ASUS thermal alert extcon device rc=%d\n", rc);
 	}
 	thermal_extcon->name = "usb_connector";	
 	rc = extcon_asus_dev_register(thermal_extcon);
 	if (rc < 0)
-		printk(KERN_ERR "[BAT][CHG] failed to register ASUS thermal alert extcon device rc=%d\n", rc);
+		pr_debug("[BAT][CHG] failed to register ASUS thermal alert extcon device rc=%d\n", rc);
 	//[---]Register the extcon for thermal alert
 
 	//[+++]Register the extcon for invalid audio donlge
 	audio_dongle_extcon = extcon_asus_dev_allocate();
 	if (IS_ERR(audio_dongle_extcon)) {
 		rc = PTR_ERR(audio_dongle_extcon);
-		printk(KERN_ERR "[BAT][CHG] failed to allocate audio dongle extcon device rc=%d\n", rc);
+		pr_debug("[BAT][CHG] failed to allocate audio dongle extcon device rc=%d\n", rc);
 	}
 	audio_dongle_extcon->name = "invalid_dongle";
 
 	rc = extcon_asus_dev_register(audio_dongle_extcon);
 	if (rc < 0)
-		printk(KERN_ERR "[BAT][CHG] failed to register audio dongle extcon device rc=%d\n", rc);
+		pr_debug("[BAT][CHG] failed to register audio dongle extcon device rc=%d\n", rc);
 	//[---]Register the extcon for thermal alert
 
 	asus_get_Batt_ID();
