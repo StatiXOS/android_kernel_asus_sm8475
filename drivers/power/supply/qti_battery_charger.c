@@ -672,7 +672,7 @@ static void battery_chg_update_usb_type_work(struct work_struct *work)
 		bcdev->usb_icl_ua = 0;
 
 	pr_debug("usb_adap_type: %u\n", pst->prop[USB_ADAP_TYPE]);
-	printk(KERN_ERR "[BAT][CHG]" "Debug USB_ADAP_TYPE %d", pst->prop[USB_ADAP_TYPE]);
+	pr_debug(KERN_ERR "[BAT][CHG]" "Debug USB_ADAP_TYPE %d", pst->prop[USB_ADAP_TYPE]);
 
 	switch (pst->prop[USB_ADAP_TYPE]) {
 	case POWER_SUPPLY_USB_TYPE_SDP:
