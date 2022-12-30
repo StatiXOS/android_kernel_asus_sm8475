@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+rel_path := ../msm-modules
+
+ext_modules :=
+ext_modules += audio-kernel
+ext_modules += camera-kernel
+ext_modules += cvp-kernel
+ext_modules += dataipa/drivers/platform/msm
+ext_modules += datarmnet/core
+ext_modules += datarmnet-ext/aps
+ext_modules += datarmnet-ext/offload
+ext_modules += datarmnet-ext/perf
+ext_modules += datarmnet-ext/perf_tether
+ext_modules += datarmnet-ext/sch
+ext_modules += datarmnet-ext/shs
+ext_modules += datarmnet-ext/wlan
+ext_modules += display-kernel/msm
+ext_modules += eva-kernel
+ext_modules += mmrm-driver
+ext_modules += video-driver
+ext_modules += wlan/qcacld-3.0
+
+# Add any modules which have their own UAPI headers to this list.  This will
+# cause the build to run the module makefile with headers_install target.
+has_uapi_headers :=
+has_uapi_headers += audio-kernel
+has_uapi_headers += video-driver
+
+install_uapi_headers_targets := $(has_uapi_headers:=_headers_install)
+
+.PHONY: $(ext_modules) $(install_uapi_headers_targets) depmod allmodules
+
+allmodules: $(ext_modules) $(install_uapi_headers_targets) depmod
+
+camera-kernel: | mmrm-driver
+cvp-kernel: | mmrm-driver
+datarmnet-ext/aps: | datarmnet/core
+datarmnet-ext/offload: | datarmnet/core
+datarmnet-ext/perf: | datarmnet/core datarmnet-ext/shs
+datarmnet-ext/perf_tether: | datarmnet/core
+datarmnet-ext/sch: | datarmnet/core
+datarmnet-ext/shs: | datarmnet/core
+datarmnet-ext/wlan: | datarmnet/core
+display-kernel/msm: | mmrm-driver
+eva-kernel: | mmrm-driver
+video-driver: | mmrm-driver
+
+include $(KERNEL_SRC)/Makefile.ext_modules.include

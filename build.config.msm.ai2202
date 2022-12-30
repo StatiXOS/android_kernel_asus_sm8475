@@ -1,0 +1,78 @@
+# Custom asus vars
+ASUS_BUILD_PROJECT=AI2202
+VARIANT=gki
+
+. ${ROOT_DIR}/${KERNEL_DIR}/build.config.msm.waipio
+
+# Common vars
+KERNEL_BINARY=Image
+
+EXT_MODULES_MAKEFILE=${KERNEL_DIR}/Makefile.ext_modules.ai2202
+EXT_MODULES="
+private/msm-asus/arch/arm64/boot/dts/vendor/qcom/audio
+private/msm-asus/arch/arm64/boot/dts/vendor/qcom/camera
+private/msm-asus/arch/arm64/boot/dts/vendor/qcom/cvp
+private/msm-asus/arch/arm64/boot/dts/vendor/qcom/display
+private/msm-asus/arch/arm64/boot/dts/vendor/qcom/mmrm
+private/msm-asus/arch/arm64/boot/dts/vendor/qcom/video
+"
+
+FILES="
+dtbs/AI2202-8475-ER2-2-overlay.dtbo
+dtbs/AI2202-8475-ER2-overlay.dtbo
+dtbs/AI2202-8475-EVB-overlay.dtbo
+dtbs/AI2202-8475-PR1-overlay.dtbo
+dtbs/AI2202-8475-PR2-overlay.dtbo
+dtbs/AI2202-8475-PR3-overlay.dtbo
+dtbs/AI2202-ER-overlay.dtbo
+dtbs/AI2202-ER2-2-overlay.dtbo
+dtbs/AI2202-EVB-overlay.dtbo
+dtbs/AI2202-SR-overlay.dtbo
+dtbs/AI2202-SR2-overlay.dtbo
+dtbs/cape-mtp-pm8010-overlay.dtbo
+dtbs/cape-v2.dtb
+dtbs/cape.dtb
+dtbs/capep.dtb
+dtbs/waipio.dtb
+dtbs/waipio-lte.dtb
+dtbs/waipiop.dtb
+dtbs/waipio-v2.dtb
+dtbs/waipiop-v2.dtb
+"
+
+function merge_dtbs() {
+  echo "  Merging vendor devicetree overlays"
+  rm -rf ${OUT_DIR}/kp-dtb ${OUT_DIR}/techpack-dtb ${OUT_DIR}/dtbs
+  mkdir ${OUT_DIR}/kp-dtb
+  mkdir ${OUT_DIR}/techpack-dtb
+  mkdir ${OUT_DIR}/dtbs
+  mv ${OUT_DIR}/arch/arm64/boot/dts/vendor/qcom/*.dtb ${OUT_DIR}/arch/arm64/boot/dts/vendor/qcom/*.dtbo ${OUT_DIR}/kp-dtb
+  mv $(find ${OUT_DIR}/arch/arm64/boot/dts/vendor/qcom/ -name "*.dtbo") ${OUT_DIR}/techpack-dtb
+  ${ROOT_DIR}/${KERNEL_DIR}/merge_dtbs.sh \
+    ${OUT_DIR}/kp-dtb \
+    ${OUT_DIR}/techpack-dtb \
+    ${OUT_DIR}/dtbs
+}
+
+append_cmd EXTRA_CMDS 'merge_dtbs'
+
+DO_NOT_STRIP_MODULES=
+
+if [ -z "$MIXED_BUILD" ]; then
+USING_PREBUILTS=
+
+MAKE_GOALS="
+$MAKE_GOALS
+${KERNEL_BINARY}
+"
+
+DEVICE_KERNEL_FILES="
+.config
+vmlinux
+System.map
+arch/arm64/boot/${KERNEL_BINARY}
+"
+FILES="$FILES
+$DEVICE_KERNEL_FILES
+"
+fi
