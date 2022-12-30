@@ -35,6 +35,10 @@ gh_dbl.ko
 gh_msgq.ko
 gh_rm_drv.ko
 gh_virt_wdt.ko
+gf_spi.ko
+sx932x_davinci.ko
+pn553.ko
+p73.ko
 hwkm.ko
 icc-bcm-voter.ko
 icc-debug.ko
