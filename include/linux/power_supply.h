@@ -238,6 +238,9 @@ struct power_supply_config {
 	ANDROID_KABI_RESERVE(1);
 };
 
+#define QTI_POWER_SUPPLY_CHARGED   0x0001
+#define QTI_POWER_SUPPLY_UNCHARGED 0x0002
+
 /* Description of power supply */
 struct power_supply_desc {
 	const char *name;
