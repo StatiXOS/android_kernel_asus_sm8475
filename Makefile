@@ -1041,6 +1041,16 @@ ifneq (,$(filter AI2202,$(ASUS_BUILD_PROJECT)))
 KBUILD_CPPFLAGS += -DASUS_AI2202_PROJECT=1
 endif
 
+# Build production kernel unless build variant is set to
+# engineering or FTM flag is enabled.
+ifeq ($(ASUS_FTM),y)
+  KBUILD_CPPFLAGS += -DASUS_FTM_BUILD=1
+else ifeq ($(TARGET_BUILD_VARIANT),eng)
+  KBUILD_CPPFLAGS += -DASUS_USERDEBUG_BUILD=1
+else
+  KBUILD_CPPFLAGS += -DASUS_USER_BUILD=1
+endif
+
 ifeq ($(CONFIG_STRIP_ASM_SYMS),y)
 LDFLAGS_vmlinux	+= $(call ld-option, -X,)
 endif
