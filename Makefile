@@ -1036,6 +1036,11 @@ KBUILD_CFLAGS   += $(KCFLAGS)
 KBUILD_LDFLAGS_MODULE += --build-id=sha1
 LDFLAGS_vmlinux += --build-id=sha1
 
+# ASUS Build Flags
+ifneq (,$(filter AI2202,$(ASUS_BUILD_PROJECT)))
+KBUILD_CPPFLAGS += -DASUS_AI2202_PROJECT=1
+endif
+
 ifeq ($(CONFIG_STRIP_ASM_SYMS),y)
 LDFLAGS_vmlinux	+= $(call ld-option, -X,)
 endif
