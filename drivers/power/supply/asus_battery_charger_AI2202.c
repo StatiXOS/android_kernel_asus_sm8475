@@ -271,7 +271,6 @@ void Batinfo_WT(struct file_message *file_msg, char *buf, int length)
         printk("Batinfo_wr buffer cannot be allocated\n");
     }
 }
-// EXPORT_SYMBOL(ASUSEvtlog);
 static DECLARE_WAIT_QUEUE_HEAD(log_wait);
 
 static int file_op(const char *filename, loff_t offset, char *buf, int length, int operation)
@@ -2061,7 +2060,6 @@ int asus_init_power_supply_prop(void) {
 static void handle_notification(struct battery_chg_dev *bcdev, void *data,
                 size_t len)
 {
-    struct evtlog_context_resp_msg3 *evtlog_msg;
     struct oem_enable_change_msg *enable_change_msg;
     struct asus_notify_work_event_msg *work_event_msg;
     struct oem_asus_adaptervid_msg *adaptervid_msg;
@@ -2075,12 +2073,6 @@ static void handle_notification(struct battery_chg_dev *bcdev, void *data,
     int rc;
 
     switch(hdr->opcode) {
-    case OEM_ASUS_EVTLOG_IND:
-        if (len == sizeof(*evtlog_msg)) {
-            evtlog_msg = data;
-            pr_err("[adsp] evtlog= %s\n", evtlog_msg->buf);
-        }
-        break;
     case OEM_SET_OTG_WA:
 	if (len == sizeof(*enable_change_msg)) {
 	    enable_change_msg = data;
@@ -2640,7 +2632,6 @@ static void print_battery_status(void) {
             charging_stats[charge_status],
             health_type[bat_health]);
 
-    // ASUSEvtlog("[BAT][Ser]%s", battInfo);
     pr_err("[BAT][Ser]%s", battInfo);
 
     schedule_delayed_work(&update_gauge_status_work, 60*HZ);
