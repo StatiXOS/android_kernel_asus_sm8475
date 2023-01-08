@@ -642,23 +642,23 @@ void fts_test_save_data(char *name, int code, int *data, int datacnt,
 #define TXT_SUPPORT             0
 
 #define FTS_TEST_DBG(fmt, args...) do { \
-printk("[FTS_TS][TEST]%s:"fmt"\n",  __func__, ##args); \
+pr_debug("[FTS_TS][TEST]%s:"fmt"\n",  __func__, ##args); \
 } while (0)
 
 #define FTS_TEST_FUNC_ENTER() do { \
-    printk("[FTS_TS][TEST]%s: Enter\n", __func__); \
+    pr_debug("[FTS_TS][TEST]%s: Enter\n", __func__); \
 } while (0)
 
 #define FTS_TEST_FUNC_EXIT()  do { \
-    printk("[FTS_TS][TEST]%s: Exit(%d)\n", __func__, __LINE__); \
+    pr_debug("[FTS_TS][TEST]%s: Exit(%d)\n", __func__, __LINE__); \
 } while (0)
 
 #define FTS_TEST_INFO(fmt, args...) do { \
-    printk(KERN_ERR "[FTS_TS/I][TEST]%s:"fmt"\n", __func__, ##args); \
+    pr_debug(KERN_ERR "[FTS_TS/I][TEST]%s:"fmt"\n", __func__, ##args); \
 } while (0)
 
 #define FTS_TEST_ERROR(fmt, args...) do { \
-    printk(KERN_ERR "[FTS_TS/E][TEST]%s:"fmt"\n", __func__, ##args); \
+    pr_debug(KERN_ERR "[FTS_TS/E][TEST]%s:"fmt"\n", __func__, ##args); \
 } while (0)
 
 #define FTS_TEST_SAVE_INFO(fmt, args...) do { \
@@ -668,7 +668,7 @@ printk("[FTS_TS][TEST]%s:"fmt"\n",  __func__, ##args); \
         TXT_BUFFER_LEN, \
         fmt, ##args);\
     } \
-    printk(KERN_ERR "[FTS_TS/E][TEST]%s:"fmt"\n", __func__, ##args);\
+    pr_debug(KERN_ERR "[FTS_TS/E][TEST]%s:"fmt"\n", __func__, ##args);\
 } while (0)
 
 #define FTS_TEST_SAVE_ERR(fmt, args...)  do { \
@@ -678,6 +678,6 @@ printk("[FTS_TS][TEST]%s:"fmt"\n",  __func__, ##args); \
         TXT_BUFFER_LEN, \
         fmt, ##args);\
     } \
-    printk(KERN_ERR "[FTS_TS/E][TEST]%s:"fmt"\n", __func__, ##args);\
+    pr_debug(KERN_ERR "[FTS_TS/E][TEST]%s:"fmt"\n", __func__, ##args);\
 } while (0)
 #endif
